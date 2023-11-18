@@ -3,7 +3,7 @@ export const colors = {
   message: {
     outgoing: {
       background: "#f1ecce",
-      text: "#0090c1",
+      text: "#3a506b",
     },
     incoming: {
       background: "#38aecc",
