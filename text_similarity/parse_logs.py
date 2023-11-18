@@ -1,11 +1,17 @@
+import torch
 import pandas as pd
+from sentence_transformers import SentenceTransformer, util
 
 
 class LogParser():
-    def __init__(self, filename) -> None:
-        self.filename = filename
-        
-        with open(filename) as f:
+    def __init__(self, log_path, embedding_path="") -> None:
+        self.log_path = log_path
+        self.embeddings =  None
+        if embedding_path:
+            # Load stored embedings
+            self.embeddings = torch.load(embedding_path)
+
+        with open(log_path) as f:
             lines = f.readlines()
         
         self.data = {'line_no':[], 'timestamp':[], 'log_tag':[], 'log_details':[]}
@@ -36,18 +42,31 @@ class LogParser():
 
 
     def calculate_embeddings(self):
+        
+        embeddings = []
+        model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+        
         # Calculate vectors per 1 min interval in logs
         interval = self.df.groupby(pd.Grouper(key='timestamp', freq='1Min'))
+
         for interval_start, group in interval:
             # Interval operations
             print(f"Interval start: {interval_start}, Row count: {len(group)}")
+            sentences = [s.replace('\n','') for s in group['log_details'].to_list()]
+            embedding_per_sentence = model.encode(sentences, convert_to_tensor=True)
+            
+            # Aggregate sentence features by mean
+            cluster_embedding = torch.mean(embedding_per_sentence, dim=0)
+            embeddings.append(cluster_embedding)
         
-        print(len(interval))
+        self.embeddings = torch.cat(embeddings, dim=0)
 
+        save_path = "data/{}_embeddings.pt".format(self.log_path.split('/')[-1].split('.')[-2])
+        torch.save(self.embeddings, save_path)
 
 
 if __name__ == '__main__':
-    parser = LogParser(filename="data/test_log1.out")
+    parser = LogParser(log_path="data/test_log1.out")
     parser.calculate_embeddings()
 
 
