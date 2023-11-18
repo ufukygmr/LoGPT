@@ -26,7 +26,7 @@ sentences = ["ssh connection logs", "metrics for script"]
 
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
-#Compute embedding for both lists
+# Compute embedding for both lists
 log_embeddings      = model.encode(list(sample_log_data.values()), convert_to_tensor=True)
 sentence_embeddings = model.encode(sentences, convert_to_tensor=True)
 
