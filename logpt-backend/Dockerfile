@@ -1,4 +1,4 @@
-from node:latest as build
+FROM --platform=linux/amd64 node:latest AS dev
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
