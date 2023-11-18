@@ -2,21 +2,25 @@ import torch
 import pandas as pd
 from sentence_transformers import SentenceTransformer, util
 
+pd.set_option('display.max_colwidth', None)
+
 
 class LogParser():
-    def __init__(self, log_path, embedding_path="") -> None:
+    def __init__(self, log_path, embedding_load_path="") -> None:
         self.log_path = log_path
         self.embeddings =  None
-        if embedding_path:
+        self.lines = None
+
+        if embedding_load_path:
             # Load stored embedings
-            self.embeddings = torch.load(embedding_path)
+            self.embeddings = torch.load(embedding_load_path)
 
         with open(log_path) as f:
-            lines = f.readlines()
+            self.lines = f.readlines()
         
-        self.data = {'line_no':[], 'timestamp':[], 'log_tag':[], 'log_details':[]}
+        data = {'line_no':[], 'timestamp':[], 'log_tag':[], 'log_details':[]}
 
-        for line_id, line in enumerate(lines):
+        for line_id, line in enumerate(self.lines):
             time_index = 15
             tag_index  = time_index + line[time_index+1:].find(':')+1
             
@@ -25,39 +29,54 @@ class LogParser():
             log_details = line[tag_index+2:]
 
             if ':' not in timestamp:
-                timestamp = self.data['timestamp'][-1]
-                log_tag = self.data['log_tag'][-1]
+                timestamp = data['timestamp'][-1]
+                log_tag = data['log_tag'][-1]
                 log_details = line.split('   ')[-1]
 
-            self.data['line_no'].append(line_id)
-            self.data['timestamp'].append(timestamp)
-            self.data['log_tag'].append(log_tag)
-            self.data['log_details'].append(log_details)
+            data['line_no'].append(line_id)
+            data['timestamp'].append(timestamp)
+            data['log_tag'].append(log_tag)
+            data['log_details'].append(log_details)
 
-        self.df = pd.DataFrame(data=self.data)
+        self.df = pd.DataFrame(data=data)
 
         # Add missing date to logs, convert timestamp
         self.df['timestamp'] = '2023 ' + self.df['timestamp']
         self.df['timestamp'] = pd.to_datetime(self.df['timestamp'], format="%Y %b %d %H:%M:%S")
 
+        # Calculate vectors per 1 sec interval in logs
+        self.interval = self.df.groupby(pd.Grouper(key='timestamp', freq='1S'))
+
+    def get_cluster_by_id(self, idx):
+        keys = list(self.interval.groups.keys())
+        line_ids = self.interval.get_group(keys[idx]).line_no.to_list()
+        
+        start_idx = line_ids[0]
+        end_idx   = line_ids[-1]
+
+        print(end_idx-start_idx)
+        return self.lines[start_idx:end_idx+1]
+    
 
     def calculate_embeddings(self):
         
         embeddings = []
         model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
         
-        # Calculate vectors per 1 min interval in logs
-        interval = self.df.groupby(pd.Grouper(key='timestamp', freq='1Min'))
-
-        for interval_start, group in interval:
+        for interval_start, group in self.interval:
             # Interval operations
             print(f"Interval start: {interval_start}, Row count: {len(group)}")
+
+            if len(group) == 0: 
+                embeddings.append(torch.zeros((1,384)))
+                continue
+
             sentences = [s.replace('\n','') for s in group['log_details'].to_list()]
             embedding_per_sentence = model.encode(sentences, convert_to_tensor=True)
             
             # Aggregate sentence features by mean
             cluster_embedding = torch.mean(embedding_per_sentence, dim=0)
-            embeddings.append(cluster_embedding)
+            embeddings.append(cluster_embedding.unsqueeze(0))
         
         self.embeddings = torch.cat(embeddings, dim=0)
 
@@ -66,7 +85,8 @@ class LogParser():
 
 
 if __name__ == '__main__':
+    # Parse provided log file
     parser = LogParser(log_path="data/test_log1.out")
+    # Calculate embeddings / vectors for each cluster
     parser.calculate_embeddings()
-
 
