@@ -3,12 +3,8 @@ export function requireEnvVar(key: string): string {
   if (value != undefined) {
     return value;
   } else {
-    if (process.env.NODE_ENV === 'test') {
-      return key;
-    } else {
-      const e = Error(`ENV value '${key}' is required.`);
-      console.error(e);
-      throw e;
-    }
+    const e = Error(`ENV value '${key}' is required.`);
+    console.error(e);
+    throw e;
   }
 }
