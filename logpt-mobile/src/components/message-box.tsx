@@ -1,8 +1,8 @@
 import { Box, Text, View } from "native-base";
 import { ColorType } from "native-base/lib/typescript/components/types";
-import React, { ReactNode, useMemo } from "react";
-import { colors } from "../lib/colors";
+import React, { useMemo } from "react";
 import { ViewStyle } from "react-native";
+import { colors } from "../lib/colors";
 
 export interface MessageBoxProps {
   message: string;
@@ -59,9 +59,9 @@ export function MessageBox({ message, incoming = false }: MessageBoxProps) {
         borderBottomRightRadius={incoming ? 8 : 0}
         borderBottomLeftRadius={incoming ? 0 : 8}>
         <Text
-          color={colors.message[incoming ? "incoming" : "outgoing"].text}
+          color={colors.text[incoming ? "primary" : "secondary"]}
           fontWeight={500}
-          fontSize={"16px"}>
+          fontSize={"md"}>
           {message}
         </Text>
       </Box>
