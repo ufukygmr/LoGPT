@@ -1,3 +1,4 @@
+import torch
 from sentence_transformers import SentenceTransformer, util
 
 sample_log_data = {
@@ -26,8 +27,11 @@ sentences = ["ssh connection logs", "metrics for script"]
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
 #Compute embedding for both lists
-embedding_1= model.encode(list(sample_log_data.values()), convert_to_tensor=True)
-embedding_2 = model.encode(sentences, convert_to_tensor=True)
+log_embeddings      = model.encode(list(sample_log_data.values()), convert_to_tensor=True)
+sentence_embeddings = model.encode(sentences, convert_to_tensor=True)
 
-similarity = util.pytorch_cos_sim(embedding_1, embedding_2)
+# Aggregate sentence embeddings by mean
+cluster_embedding = torch.mean(log_embeddings, dim=0)
+
+similarity = util.pytorch_cos_sim(cluster_embedding, sentence_embeddings)
 print(similarity)
