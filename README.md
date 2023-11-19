@@ -16,5 +16,12 @@ We use a serverless architecture that manages the incoming data stream of log fi
 </p>
 
 
+## User Interface
+Below, we provide screenshots demonstrating the login screen and the messaging components of our mobile application.
+
+<p align="center">
+    <img src="assets/message.jpg" width="200"/>
+    <img src="assets/login.jpg" width="200"/>
+</p>
 
 
