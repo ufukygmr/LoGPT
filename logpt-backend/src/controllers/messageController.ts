@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Middlewares, Path, Post, Request, Route, SuccessResponse, Tags } from 'tsoa';
-import prisma from '../clients/prismaClient';
-import { firebaseAuthMiddleware } from '../middleware/authMiddleware';
 import { getUserByToken } from '../clients/firebaseClient';
 import { sendToOpenAI } from '../clients/openAIClient';
+import prisma from '../clients/prismaClient';
 import { runPythonScript } from '../clients/pythonClient';
+import { firebaseAuthMiddleware } from '../middleware/authMiddleware';
 
-export const ABSOLUTE_PATH = '/Users/ufukyagmur/Desktop/LoGPT/text-similarity/';
+export const ABSOLUTE_PATH = '/Users/bhdurak/Desktop/hackaTUM/LoGPT/text-similarity/';
 
 interface Message {
   id: string;
@@ -66,15 +66,6 @@ export class MessageController extends Controller {
       });
     }
 
-    prisma.message.create({
-      data: {
-        content: body.content,
-        author: 'openAI',
-        time: body.time,
-        sessionID: body.sessionID,
-      },
-    });
-
     const parsedMsg = body.content.split('\n');
     const title = parsedMsg[0].split(' ')[1];
     const logFile = parsedMsg[1].split(' ')[1];
@@ -93,7 +84,7 @@ export class MessageController extends Controller {
     const answerMessage = await prisma.message.create({
       data: {
         content: responseContent,
-        author: user.uid,
+        author: 'open AI',
         time: new Date(),
         sessionID: body.sessionID,
       },
@@ -131,7 +122,6 @@ export class MessageController extends Controller {
     return prisma.message.findMany({
       where: {
         sessionID: sessionId,
-        author: user.uid ? user.uid : 'B0lLmdklNNRuv4UgWr0IwOZvPK62',
       },
     });
   }

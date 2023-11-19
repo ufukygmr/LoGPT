@@ -1,13 +1,13 @@
 import { format } from "date-fns";
 import { Box, Text, View } from "native-base";
 import { ColorType } from "native-base/lib/typescript/components/types";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { ViewStyle } from "react-native";
 import { colors } from "../lib/colors";
 
 export interface MessageBoxProps {
   message: string;
-  time: Date;
+  time: string;
   incoming?: boolean;
   isHistoryMessage?: boolean;
 }
@@ -57,20 +57,13 @@ export function MessageBox({
     () => colors.message[incoming ? "incoming" : "outgoing"].background,
     [incoming]
   );
-  const index = React.useRef(0);
-  const [messageToShow, setMessageToShow] = useState(
-    incoming && !isHistoryMessage ? "" : message
-  );
-  if (incoming && !isHistoryMessage && messageToShow !== message) {
-    setTimeout(() => {
-      setMessageToShow(messageToShow + message[index.current]);
-      index.current++;
-    }, 100);
-  }
   return (
-    <View alignSelf={incoming ? "flex-start" : "flex-end"} px={4} my={1}>
+    <View
+      alignSelf={incoming ? "flex-start" : "flex-end"}
+      px={4}
+      my={1}
+      maxWidth={"50%"}>
       <Box
-        maxW={"50%"}
         bg={backgroundColor}
         px={4}
         py={2}
@@ -81,13 +74,13 @@ export function MessageBox({
           color={colors.text[incoming ? "primary" : "secondary"]}
           fontWeight={500}
           fontSize={"md"}>
-          {messageToShow}
+          {message}
         </Text>
         <Text
           alignSelf={incoming ? "flex-start" : "flex-end"}
           fontSize={"xs"}
           color={colors.text.tertiary}>
-          {format(time, "hh:mm")}
+          {format(new Date(time), "hh:mm")}
         </Text>
       </Box>
       <BubbleIndicator backgroundColor={backgroundColor} incoming={incoming} />

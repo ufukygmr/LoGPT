@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 
-const pythonScript = '/Users/ufukyagmur/Desktop/LoGPT/text-similarity/measure_similarity.py'; //TODO: Handle this path
+const pythonScript = '/Users/bhdurak/Desktop/hackaTUM/LoGPT/text-similarity/measure_similarity.py'; //TODO: Handle this path
 
 export const runPythonScript = (args: string[]): Promise<string> => {
   return new Promise((resolve, reject) => {
