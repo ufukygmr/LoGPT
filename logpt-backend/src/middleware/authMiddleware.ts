@@ -4,20 +4,18 @@ import { getUserByToken } from '../clients/firebaseClient';
 export async function firebaseAuthMiddleware(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<Response | void> {
-  // console.log(JSON.stringify(req.headers['authorization']));
   const bearerHeader = req.headers['authorization'];
-  // console.log(' aaaa');
-  console.log('Auth Token ==> ', bearerHeader);
   if (!bearerHeader) {
     return res.status(401).json({
       success: false,
       message: 'No authorization header',
     });
   }
+  const token = bearerHeader.split(' ')[1];
 
-  const user = getUserByToken(bearerHeader.split(' ')[1]);
+  const user = await getUserByToken(token);
   if (!user) {
     return res.status(401).json({
       success: false,

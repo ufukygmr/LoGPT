@@ -17,7 +17,7 @@ const models: TsoaRoute.Models = {
             "author": {"dataType":"string","required":true},
             "time": {"dataType":"datetime","required":true},
             "sessionID": {"dataType":"string","required":true},
-            "answerId": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "answerId": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -28,6 +28,16 @@ const models: TsoaRoute.Models = {
             "content": {"dataType":"string","required":true},
             "time": {"dataType":"datetime","required":true},
             "sessionID": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "HistoryResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "title": {"dataType":"string","required":true},
+            "time": {"dataType":"datetime","required":true},
         },
         "additionalProperties": false,
     },
@@ -72,6 +82,7 @@ export function RegisterRoutes(app: Router) {
 
             function MessageController_sendMessage(request: any, response: any, next: any) {
             const args = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     body: {"in":"body","name":"body","required":true,"ref":"MessageRequest"},
             };
 
@@ -85,6 +96,57 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.sendMessage.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 200, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/message/history',
+            ...(fetchMiddlewares<RequestHandler>(MessageController)),
+            ...(fetchMiddlewares<RequestHandler>(MessageController.prototype.getHistory)),
+
+            function MessageController_getHistory(request: any, response: any, next: any) {
+            const args = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new MessageController();
+
+
+              const promise = controller.getHistory.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 200, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/message/history/:sessionId',
+            ...(fetchMiddlewares<RequestHandler>(MessageController)),
+            ...(fetchMiddlewares<RequestHandler>(MessageController.prototype.getHistoryById)),
+
+            function MessageController_getHistoryById(request: any, response: any, next: any) {
+            const args = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    sessionId: {"in":"path","name":"sessionId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new MessageController();
+
+
+              const promise = controller.getHistoryById.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, 200, next);
             } catch (err) {
                 return next(err);

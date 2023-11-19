@@ -5,8 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "gen": "npm run clean && mkdir -p build && npx tsoa routes",
-    "clean": "rm -rf build"
+    "gen": "npm run clean && mkdir -p build && npx tsoa routes && npx prisma generate",
+    "clean": "rm -rf build",
+    "lint": "eslint --ext .ts src/",
+    "lint:fix": "npm run lint -- --fix",
+    "dev": "npm run gen && nodemon",
+    "build": "npm run clean && npm run gen && tsc",
+    "start": "node dist/src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -14,16 +19,23 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.9.1",
+    "eslint": "~8.36.0",
+    "eslint-config-prettier": "~8.7.0",
+    "eslint-plugin-prettier": "~4.2.1",
+    "prettier": "~2.8.4",
     "prisma": "^5.6.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
   "dependencies": {
     "@prisma/client": "^5.6.0",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
     "express": "^4.18.2",
     "firebase": "^10.6.0",
     "firebase-admin": "^11.11.0",
     "firebase-auth": "^0.1.2",
+    "openai": "^4.19.0",
+    "readline-sync": "^1.4.10",
     "tsoa": "^5.1.1"
   },
   "nodemonConfig": {
