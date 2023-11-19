@@ -2,6 +2,7 @@ import { Body, Controller, Get, Middlewares, Path, Post, Request, Route, Success
 import prisma from '../clients/prismaClient';
 import { firebaseAuthMiddleware } from '../middleware/authMiddleware';
 import { getUserByToken } from '../clients/firebaseClient';
+import { sendToOpenAI } from '../clients/openAIClient';
 
 interface Message {
   id: string;
@@ -9,7 +10,7 @@ interface Message {
   author: string;
   time: Date;
   sessionID: string;
-  answerId: string | null;
+  answerId?: string;
 }
 
 interface MessageRequest {
@@ -62,14 +63,24 @@ export class MessageController extends Controller {
       });
     }
 
-    return prisma.message.create({
+    prisma.message.create({
       data: {
         content: body.content,
-        author: user.uid ? user.uid : 'B0lLmdklNNRuv4UgWr0IwOZvPK62',
+        author: user.uid,
         time: body.time,
         sessionID: body.sessionID,
       },
     });
+
+    console.log(await sendToOpenAI(body.content, 'we have no log for now'));
+
+    return {
+      id: '213421343124',
+      content: 'gg',
+      author: user.uid,
+      time: new Date(),
+      sessionID: body.sessionID,
+    };
   }
 
   @SuccessResponse('200')
