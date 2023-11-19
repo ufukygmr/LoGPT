@@ -1,3 +1,4 @@
+import os
 import torch
 import pandas as pd
 from sentence_transformers import SentenceTransformer, util
@@ -78,6 +79,7 @@ class LogParser():
         
         self.embeddings = torch.cat(embeddings, dim=0)
 
+        os.makedirs("data", exist_ok=True)
         save_path = "data/{}_embeddings.pt".format(self.log_path.split('/')[-1].split('.')[-2])
         torch.save(self.embeddings, save_path)
 
