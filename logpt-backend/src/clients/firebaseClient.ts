@@ -2,9 +2,9 @@ import admin from 'firebase-admin';
 import { requireEnvVar } from '../utils';
 // import s from '../../firebase-credential.json';
 //TODO: Handle That
-// const firebaseCredential = requireEnvVar('FIREBASE_CREDENTIAL');
-const firebaseCredential = '/app/firebase-credential.json';
+const firebaseCredential = requireEnvVar('FIREBASE_CREDENTIAL');
 // const firebaseCredential = '/Users/ufukyagmur/Desktop/logpt/logpt-backend/firebase-credential.json';
+// const firebaseCredential = '/app/firebase-credential.json';
 export const firebaseClient = admin.initializeApp({
   credential: admin.credential.cert(firebaseCredential),
 });
