@@ -15,7 +15,7 @@ export async function firebaseAuthMiddleware(
   }
   const token = bearerHeader.split(' ')[1];
 
-  const user = getUserByToken(token);
+  const user = await getUserByToken(token);
   if (!user) {
     return res.status(401).json({
       success: false,

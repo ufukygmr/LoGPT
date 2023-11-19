@@ -17,7 +17,7 @@ const models: TsoaRoute.Models = {
             "author": {"dataType":"string","required":true},
             "time": {"dataType":"datetime","required":true},
             "sessionID": {"dataType":"string","required":true},
-            "answerId": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "answerId": {"dataType":"string"},
         },
         "additionalProperties": false,
     },

@@ -2,6 +2,7 @@ import { Body, Controller, Get, Middlewares, Path, Post, Request, Route, Success
 import prisma from '../clients/prismaClient';
 import { firebaseAuthMiddleware } from '../middleware/authMiddleware';
 import { getUserByToken } from '../clients/firebaseClient';
+import { sendToOpenAI } from '../clients/openAIClient';
 
 interface Message {
   id: string;
@@ -70,6 +71,8 @@ export class MessageController extends Controller {
         sessionID: body.sessionID,
       },
     });
+
+    console.log(await sendToOpenAI(body.content, 'we have no log for now'));
 
     return {
       id: '213421343124',
