@@ -22,9 +22,6 @@ export const UserContext = createContext<{
   setUser: (user) => {},
 });
 export default function App() {
-  const [user, setUser] = useState<User | undefined | null>(undefined);
-  console.log("CRED:", process.env);
-
   const fireBaseApp = initializeApp(firebaseConfig);
 
   const auth = getAuth(fireBaseApp)
@@ -32,6 +29,7 @@ export default function App() {
     : initializeAuth(fireBaseApp, {
         persistence: getReactNativePersistence(AsyncStorage),
       });
+  const [user, setUser] = useState<User | undefined | null>(auth.currentUser);
   auth.onAuthStateChanged((user) => setUser(user));
   return (
     <NativeBaseProvider>

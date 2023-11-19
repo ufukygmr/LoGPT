@@ -72,7 +72,7 @@ const msgs: Message[] = [
   {
     id: "m3",
     author: "bot",
-    content: "Ii, sndn",
+    content: "Ii, sndn Ii, sndn Ii, sndn Ii, sndn Ii, sndn ",
     sessionID: "s1",
     time: new Date(),
   },
@@ -101,6 +101,13 @@ const msgs: Message[] = [
     id: "m7",
     author: "bot",
     content: "bb",
+    sessionID: "s1",
+    time: new Date(),
+  },
+  {
+    id: "m8",
+    author: "bot",
+    content: "Ii, sndn Ii, sndn Ii, sndn Ii, sndn Ii, sndn ",
     sessionID: "s1",
     time: new Date(),
   },
@@ -152,12 +159,13 @@ export function MessageScreen({ sessionId }: MessageScreenProps) {
           flex={1}
           flexGrow={1}>
           <View style={{ transform: [{ scaleY: -1 }] }}>
-            {messages.map((message) => (
+            {messages.map((message, index) => (
               <MessageBox
                 key={message.id}
                 message={message.content}
                 time={message.time}
                 incoming={message.author != user?.uid}
+                isHistoryMessage={index < messages.length - 1}
               />
             ))}
           </View>
