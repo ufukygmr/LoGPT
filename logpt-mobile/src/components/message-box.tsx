@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { Box, Text, View } from "native-base";
 import { ColorType } from "native-base/lib/typescript/components/types";
 import React, { useMemo } from "react";
@@ -6,6 +7,7 @@ import { colors } from "../lib/colors";
 
 export interface MessageBoxProps {
   message: string;
+  time: Date;
   incoming?: boolean;
 }
 
@@ -38,13 +40,17 @@ function BubbleIndicator({ backgroundColor, incoming }: BubbleIndicatorProps) {
         bottom={0}
         width={8}
         height={8}
-        bg={colors.background}
+        bg={colors.background.primary}
         style={indicatorStyle}></Box>
     </View>
   );
 }
 
-export function MessageBox({ message, incoming = false }: MessageBoxProps) {
+export function MessageBox({
+  message,
+  incoming = false,
+  time,
+}: MessageBoxProps) {
   const backgroundColor: ColorType = useMemo(
     () => colors.message[incoming ? "incoming" : "outgoing"].background,
     [incoming]
@@ -63,6 +69,12 @@ export function MessageBox({ message, incoming = false }: MessageBoxProps) {
           fontWeight={500}
           fontSize={"md"}>
           {message}
+        </Text>
+        <Text
+          alignSelf={incoming ? "flex-start" : "flex-end"}
+          fontSize={"xs"}
+          color={colors.text.tertiary}>
+          {format(time, "hh:mm")}
         </Text>
       </Box>
       <BubbleIndicator backgroundColor={backgroundColor} incoming={incoming} />

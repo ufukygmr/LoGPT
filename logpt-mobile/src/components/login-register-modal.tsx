@@ -1,8 +1,17 @@
-import { Icon } from "@rneui/base";
-import { Button, Heading, Input, Link, Modal, Text, View } from "native-base";
-import React, { useContext, useState } from "react";
+import {
+  AlertDialog,
+  Button,
+  Heading,
+  Input,
+  Link,
+  Modal,
+  Text,
+  View,
+} from "native-base";
+import React, { useContext, useRef, useState } from "react";
 import { UserContext } from "../../App";
 import { colors } from "../lib/colors";
+import { resetPassword } from "../lib/reset-password";
 import { signIn } from "../lib/sign-in";
 import { signUp } from "../lib/sign-up";
 import { isEmailValid } from "../lib/validate-email";
@@ -17,7 +26,11 @@ export function LoginRegisterModal({ type }: LoginRegisterModalProps) {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [pageType, setPageType] = useState(type);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState<boolean | undefined>(
+    undefined
+  );
+  const [sentEmail, setSentEmail] = useState(false);
+  const [emailError, setEmailError] = useState(false);
   const [fieldValidity, setFieldValidity] = useState({
     email: true,
     password: true,
@@ -47,38 +60,23 @@ export function LoginRegisterModal({ type }: LoginRegisterModalProps) {
         pageType === "Login"
           ? await signIn(email, password, setUser)
           : await signUp(email, password, `${name} ${surname}`, setUser);
-      if (authResult) setAuthenticated(true);
+      setAuthenticated(authResult as boolean);
     }
   }
-
-  if (authenticated) {
-    setTimeout(() => {
-      setOpen(false);
-    }, 3000);
-    return (
-      <Modal isOpen={isOpen}>
-        <View
-          bg={colors.background}
-          h={"80%"}
-          w={"80%"}
-          borderColor={colors.border.modal}
-          borderWidth={1}
-          padding={6}
-          borderRadius={8}
-          justifyContent={"center"}
-          alignItems={"center"}>
-          <Icon name="check-circle" size={48} color={colors.text.primary} />
-          <Heading size={"xl"} color={colors.text.primary}>
-            Welcome, {user.displayName}!
-          </Heading>
-        </View>
-      </Modal>
-    );
-  }
+  const cancelRef = useRef(null);
   return (
     <Modal isOpen={isOpen}>
+      <AlertDialog leastDestructiveRef={cancelRef} isOpen={sentEmail}>
+        <AlertDialog.Content padding={12} alignItems={"center"}>
+          <Text>Sent email to {email}.</Text>
+          <Button mt={6} onPress={() => setSentEmail(false)}>
+            OK
+          </Button>
+          <AlertDialog.CloseButton />
+        </AlertDialog.Content>
+      </AlertDialog>
       <View
-        bg={colors.background}
+        bg={colors.background.primary}
         h={"80%"}
         w={"80%"}
         borderColor={colors.border.modal}
@@ -163,13 +161,37 @@ export function LoginRegisterModal({ type }: LoginRegisterModalProps) {
           onPress={handleLoginOrRegister}>
           {pageType}
         </Button>
-        <Text
-          color={colors.border.error}
-          opacity={pageValidity ? 0 : 100}
-          mt={2}
-          textAlign={"right"}>
-          Please fill in all the fields!
-        </Text>
+        {!pageValidity && (
+          <Text color={colors.border.error} mt={2} textAlign={"right"}>
+            Please fill in all the fields!
+          </Text>
+        )}
+        {authenticated === false && (
+          <Text color={colors.border.error} mt={2} textAlign={"right"}>
+            Incorrect email or password!
+          </Text>
+        )}
+        {pageType === "Login" && (
+          <Button
+            mt={6}
+            _text={{ fontSize: "md", fontWeight: 500 }}
+            onPress={() => {
+              if (email.length === 0 || !isEmailValid(email)) {
+                setEmailError(true);
+                return;
+              }
+              setEmailError(false);
+              resetPassword(email);
+              setSentEmail(true);
+            }}>
+            Reset Password
+          </Button>
+        )}
+        {emailError && (
+          <Text color={colors.border.error} mt={2} textAlign={"right"}>
+            Please enter a valid email
+          </Text>
+        )}
         <Link
           _text={{ color: colors.text.primary }}
           onPress={() =>

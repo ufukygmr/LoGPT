@@ -19,7 +19,7 @@ export function signUp(
       updateProfile(user, {
         displayName,
       }).then(() => {
-        setUser(auth.currentUser);
+        setUser(auth.currentUser as User);
         return true;
       });
       // ...

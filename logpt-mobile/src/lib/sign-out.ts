@@ -1,17 +1,13 @@
 import { getAuth, signInWithEmailAndPassword, User } from "firebase/auth";
 
-export async function signIn(
-  email: string,
-  password: string,
-  setUser: (arg: User) => void
-) {
+export async function signOut(setUser: (arg: User | null) => void) {
   const auth = getAuth();
-
-  const result = await signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+  // TODO: Logout
+  const result = await auth
+    .signOut()
+    .then(() => {
       // Signed in
-      const user = userCredential.user;
-      setUser(user);
+      setUser(null);
       return true;
       // ...
     })

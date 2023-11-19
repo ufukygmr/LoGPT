@@ -1,8 +1,9 @@
 export const colors = {
-  background: "#2e4057",
+  background: { primary: "#2e4057", pressed: "#1a2636" },
   text: {
     primary: "#f4ebd9",
     secondary: "#3a506b",
+    tertiary: "#52525b",
   },
   message: {
     outgoing: {
