@@ -129,7 +129,10 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-
-
 logpt-firebase-adminsdk.json
 
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
