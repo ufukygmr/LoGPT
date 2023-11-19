@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "logpt-mobile",
+    "slug": "logpt-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/LoGPT.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "stretch",
+      "backgroundColor": "#2e4057"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/LoGPT.png",
+        "backgroundColor": "#2e4057"
+      }
+    },
+    "web": {
+      "favicon": "./assets/LoGPT.png"
+    }
+  }
+}

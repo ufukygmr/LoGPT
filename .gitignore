@@ -121,6 +121,7 @@ dist
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+.DS_Store
 
 # yarn v2
 .yarn/cache
@@ -129,8 +130,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-logpt-firebase-adminsdk.json
 
+logpt-firebase-adminsdk.json
 ### macOS ###
 # General
 .DS_Store
