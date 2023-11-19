@@ -3,6 +3,9 @@ import prisma from '../clients/prismaClient';
 import { firebaseAuthMiddleware } from '../middleware/authMiddleware';
 import { getUserByToken } from '../clients/firebaseClient';
 import { sendToOpenAI } from '../clients/openAIClient';
+import { runPythonScript } from '../clients/pythonClient';
+
+const ABSOLUTE_PATH = '/Users/ufukyagmur/Desktop/LoGPT/text-similarity/';
 
 interface Message {
   id: string;
@@ -72,15 +75,40 @@ export class MessageController extends Controller {
       },
     });
 
-    console.log(await sendToOpenAI(body.content, 'we have no log for now'));
+    const parsedMsg = body.content.split('\n');
+    const title = parsedMsg[0].split(' ')[1];
+    const logFile = parsedMsg[1].split(' ')[1];
+    const userMessage = parsedMsg[2].split(' ')[1];
 
-    return {
-      id: '213421343124',
-      content: 'gg',
-      author: user.uid,
-      time: new Date(),
-      sessionID: body.sessionID,
-    };
+    // console.log(await sendToOpenAI(body.content, 'we have no log for now'));
+    const nlpResponse = await runPythonScript([
+      `${ABSOLUTE_PATH}/data/${logFile}.out`,
+      `${ABSOLUTE_PATH}/data/${logFile}_embeddings.pt`,
+      title,
+    ]);
+
+    const openAIAnswer = await sendToOpenAI(userMessage, nlpResponse);
+
+    const responseContent = openAIAnswer.content + '\n\n\n' + nlpResponse;
+    const answerMessage = await prisma.message.create({
+      data: {
+        content: responseContent,
+        author: user.uid,
+        time: new Date(),
+        sessionID: body.sessionID,
+      },
+    });
+    await prisma.message.create({
+      data: {
+        content: body.content,
+        author: user.uid,
+        time: body.time,
+        sessionID: body.sessionID,
+        answerId: answerMessage.id,
+      },
+    });
+
+    return answerMessage;
   }
 
   @SuccessResponse('200')
