@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Middlewares, Path, Post, Request, Route, SuccessResponse, Tags } from 'tsoa';
-import prisma from '../clients/prismaClient';
-import { firebaseAuthMiddleware } from '../middleware/authMiddleware';
 import { getUserByToken } from '../clients/firebaseClient';
 import { sendToOpenAI } from '../clients/openAIClient';
+import prisma from '../clients/prismaClient';
 import { runPythonScript } from '../clients/pythonClient';
+import { firebaseAuthMiddleware } from '../middleware/authMiddleware';
 
 export const ABSOLUTE_PATH = '/Users/ufukyagmur/Desktop/LoGPT/text-similarity/';
 

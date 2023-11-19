@@ -1,12 +1,6 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
 import { initializeApp } from "firebase/app";
-import {
-  getAuth,
-  getReactNativePersistence,
-  initializeAuth,
-  User,
-} from "firebase/auth";
+import { getAuth, initializeAuth, User } from "firebase/auth";
 import { NativeBaseProvider, View } from "native-base";
 import React, { createContext, useState } from "react";
 import { LoginRegisterModal } from "./src/components/login-register-modal";
@@ -26,9 +20,7 @@ export default function App() {
 
   const auth = getAuth(fireBaseApp)
     ? getAuth(fireBaseApp)
-    : initializeAuth(fireBaseApp, {
-        persistence: getReactNativePersistence(AsyncStorage),
-      });
+    : initializeAuth(fireBaseApp);
   const [user, setUser] = useState<User | undefined | null>(auth.currentUser);
   auth.onAuthStateChanged((user) => setUser(user));
   return (

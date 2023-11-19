@@ -2,7 +2,7 @@ export interface Message {
   id: string;
   content: string;
   author: string;
-  time: Date;
+  time: string;
   answerId?: string;
   sessionID: string;
 }

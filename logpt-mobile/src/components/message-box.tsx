@@ -7,7 +7,7 @@ import { colors } from "../lib/colors";
 
 export interface MessageBoxProps {
   message: string;
-  time: Date;
+  time: string;
   incoming?: boolean;
   isHistoryMessage?: boolean;
 }
@@ -68,9 +68,12 @@ export function MessageBox({
     }, 100);
   }
   return (
-    <View alignSelf={incoming ? "flex-start" : "flex-end"} px={4} my={1}>
+    <View
+      alignSelf={incoming ? "flex-start" : "flex-end"}
+      px={4}
+      my={1}
+      maxWidth={"50%"}>
       <Box
-        maxW={"50%"}
         bg={backgroundColor}
         px={4}
         py={2}
@@ -87,7 +90,7 @@ export function MessageBox({
           alignSelf={incoming ? "flex-start" : "flex-end"}
           fontSize={"xs"}
           color={colors.text.tertiary}>
-          {format(time, "hh:mm")}
+          {format(new Date(time), "hh:mm")}
         </Text>
       </Box>
       <BubbleIndicator backgroundColor={backgroundColor} incoming={incoming} />
