@@ -21,6 +21,5 @@ export async function signIn(
       const errorMessage = error.message;
       return false;
     });
-  console.log("RETURNING:", result);
   return result;
 }

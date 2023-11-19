@@ -1,4 +1,4 @@
-import { getAuth, signInWithEmailAndPassword, User } from "firebase/auth";
+import { getAuth, User } from "firebase/auth";
 
 export async function signOut(setUser: (arg: User | null) => void) {
   const auth = getAuth();
@@ -17,6 +17,5 @@ export async function signOut(setUser: (arg: User | null) => void) {
       const errorMessage = error.message;
       return false;
     });
-  console.log("RETURNING:", result);
   return result;
 }
