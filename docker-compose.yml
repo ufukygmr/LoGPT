@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: logpt
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: testpass123
+      PORT: 6500
+    # secrets:
+    #   - postgres_password
+    ports:
+      - '6500:5432'
+
+  logpt-backend:
+    build:
+      context: ./logpt-backend
+    environment:
+      - DATABASE_URL=postgresql://postgres:testpass123@127.0.0.1:5432/logpt?schema=public
+    depends_on:
+      - postgres
+    ports:
+      - '8000:8000'
+    # secrets:
+    #   - logpt-firebase-key
+    #   - postgres_password
+
+secrets:
+  postgres_password:
+    external: true
+  logpt-firebase-key:
+    external: true
