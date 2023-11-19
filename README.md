@@ -4,7 +4,9 @@
     <img src="assets/LoGPT.png" width="350"/>
 </p>
 
-> Chatbot to communicate with your Logs!
+> Checking your logs made easy!
+
+LoGPT is a chatbot to communicate with your Logs. It filters out the most relevant lines from your log file and provides a summary based on the user-specified query. It provides both mobile and web applications for user interaction.
 
 
 ## Architectural Design
