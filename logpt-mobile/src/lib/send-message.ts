@@ -8,9 +8,13 @@ export async function sendMessage(
 ) {
   const response = await axios.post(
     `${requestUrl}/send`,
-    { sessionID: sessionId, content: content, time: new Date() },
+    {
+      sessionID: sessionId,
+      content:
+        "title: System Errors\nlogfile: test_log1\ncontent: get me all of the ssh errors of test_log1",
+      time: new Date(),
+    },
     generateHeaders(token)
   );
-  console.log("SEND RESPONSE", response);
   return response.data;
 }

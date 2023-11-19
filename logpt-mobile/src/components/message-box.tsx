@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { Box, Text, View } from "native-base";
 import { ColorType } from "native-base/lib/typescript/components/types";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { ViewStyle } from "react-native";
 import { colors } from "../lib/colors";
 
@@ -57,16 +57,6 @@ export function MessageBox({
     () => colors.message[incoming ? "incoming" : "outgoing"].background,
     [incoming]
   );
-  const index = React.useRef(0);
-  const [messageToShow, setMessageToShow] = useState(
-    incoming && !isHistoryMessage ? "" : message
-  );
-  if (incoming && !isHistoryMessage && messageToShow !== message) {
-    setTimeout(() => {
-      setMessageToShow(messageToShow + message[index.current]);
-      index.current++;
-    }, 100);
-  }
   return (
     <View
       alignSelf={incoming ? "flex-start" : "flex-end"}
@@ -84,7 +74,7 @@ export function MessageBox({
           color={colors.text[incoming ? "primary" : "secondary"]}
           fontWeight={500}
           fontSize={"md"}>
-          {messageToShow}
+          {message}
         </Text>
         <Text
           alignSelf={incoming ? "flex-start" : "flex-end"}

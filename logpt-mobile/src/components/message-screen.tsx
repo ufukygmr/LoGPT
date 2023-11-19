@@ -1,5 +1,11 @@
 import { Icon } from "@rneui/base";
-import { Input, KeyboardAvoidingView, ScrollView, View } from "native-base";
+import {
+  Input,
+  KeyboardAvoidingView,
+  ScrollView,
+  Spinner,
+  View,
+} from "native-base";
 import React, { useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { UserContext } from "../../App";
@@ -17,39 +23,6 @@ export interface MessageScreenProps {
   sessionId: string;
 }
 
-const sessions: Session[] = [
-  {
-    id: "s1",
-    author: "Burak",
-    time: new Date(),
-    title: "Session 1",
-  },
-  {
-    id: "s2",
-    author: "Burak",
-    time: new Date(),
-    title: "Session 2",
-  },
-  {
-    id: "s3",
-    author: "Burak",
-    time: new Date(),
-    title: "Session 3",
-  },
-  {
-    id: "s4",
-    author: "Burak",
-    time: new Date(),
-    title: "Session 4",
-  },
-  {
-    id: "s5",
-    author: "Burak",
-    time: new Date(),
-    title: "Session 5",
-  },
-];
-
 export function MessageScreen({ sessionId }: MessageScreenProps) {
   const { user, setUser } = useContext(UserContext);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -57,8 +30,8 @@ export function MessageScreen({ sessionId }: MessageScreenProps) {
   const [currentSession, setCurrentSession] = useState<Session>(allSessions[0]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [showLeftMenu, setShowLeftMenu] = useState(false);
+  const [isWaiting, setIsWaiting] = useState(false);
 
-  console.log("msgs:", messages, "CS:", currentSession);
   useEffect(() => {
     user
       .getIdToken()
@@ -70,36 +43,43 @@ export function MessageScreen({ sessionId }: MessageScreenProps) {
     setCurrentSession(allSessions[0]);
     user.getIdToken().then((token) =>
       getMessages(token, allSessions[0].id).then((response) => {
-        console.log("RESP:", response);
         setMessages(response);
       })
     );
   }, [allSessions]);
 
   function handleSessionChange(sessionId: string) {
-    const newSession = sessions.find((session) => session.id === sessionId);
+    const newSession = allSessions.find((session) => session.id === sessionId);
     if (!newSession) return;
     setCurrentSession(newSession);
+    user.getIdToken().then((token) =>
+      getMessages(token, allSessions[0].id).then((response: Message[]) => {
+        setMessages(response);
+      })
+    );
     setShowLeftMenu(false);
   }
   async function handleSend() {
+    setIsWaiting(true);
     const token = await user.getIdToken();
+    setMessages([
+      ...messages,
+      {
+        author: currentSession.author,
+        id: "",
+        content: currentMessage,
+        sessionID: currentSession.id,
+        time: new Date().toISOString(),
+      },
+    ]);
+    setCurrentMessage("");
     const response = await sendMessage(
       token,
       currentSession.id,
       currentMessage
     );
-    setMessages([
-      ...messages,
-      {
-        author: currentSession.author,
-        id: response.id,
-        content: currentMessage,
-        sessionID: currentSession.id,
-        time: new Date().toISOString(),
-      },
-      response,
-    ]);
+    setMessages([...messages, response]);
+    setIsWaiting(false);
   }
   const toggleMenu = () => setShowLeftMenu(!showLeftMenu);
   return (
@@ -114,7 +94,7 @@ export function MessageScreen({ sessionId }: MessageScreenProps) {
       <View flexDirection={"row"} flex={1}>
         {showLeftMenu && (
           <LeftMenu
-            sessions={sessions}
+            sessions={allSessions}
             handleSessionChange={handleSessionChange}
           />
         )}
@@ -125,10 +105,10 @@ export function MessageScreen({ sessionId }: MessageScreenProps) {
           <View style={{ transform: [{ scaleY: -1 }] }}>
             {messages.map((message, index) => (
               <MessageBox
-                key={message.id}
+                key={index}
                 message={message.content}
                 time={message.time}
-                incoming={message.author != currentSession.author}
+                incoming={message.author !== currentSession.author}
                 isHistoryMessage={index < messages.length - 1}
               />
             ))}
@@ -147,13 +127,18 @@ export function MessageScreen({ sessionId }: MessageScreenProps) {
         color={colors.text.primary}
         value={currentMessage}
         onChangeText={setCurrentMessage}
+        isDisabled={isWaiting}
         rightElement={
-          <Icon
-            onPress={() => handleSend()}
-            style={{ paddingRight: 12 }}
-            name="send"
-            color={colors.text.primary}
-          />
+          isWaiting ? (
+            <Spinner paddingRight={6} color={colors.text.primary} />
+          ) : (
+            <Icon
+              onPress={() => handleSend()}
+              style={{ paddingRight: 12 }}
+              name="send"
+              color={colors.text.primary}
+            />
+          )
         }></Input>
     </KeyboardAvoidingView>
   );
