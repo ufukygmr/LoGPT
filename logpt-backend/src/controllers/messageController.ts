@@ -5,7 +5,7 @@ import { getUserByToken } from '../clients/firebaseClient';
 import { sendToOpenAI } from '../clients/openAIClient';
 import { runPythonScript } from '../clients/pythonClient';
 
-const ABSOLUTE_PATH = '/Users/ufukyagmur/Desktop/LoGPT/text-similarity/';
+export const ABSOLUTE_PATH = '/Users/ufukyagmur/Desktop/LoGPT/text-similarity/';
 
 interface Message {
   id: string;
@@ -69,7 +69,7 @@ export class MessageController extends Controller {
     prisma.message.create({
       data: {
         content: body.content,
-        author: user.uid,
+        author: 'openAI',
         time: body.time,
         sessionID: body.sessionID,
       },
