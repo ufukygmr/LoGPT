@@ -53,8 +53,6 @@ class LogParser():
         
         start_idx = line_ids[0]
         end_idx   = line_ids[-1]
-
-        print(end_idx-start_idx)
         return self.lines[start_idx:end_idx+1]
     
 
